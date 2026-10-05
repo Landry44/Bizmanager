@@ -1,0 +1,2 @@
+import { getCurrentUser } from '@/src/lib/auth'; import { redirect } from 'next/navigation'; import { db } from '@/src/lib/db'; import DocumentsClient from './DocumentsClient';
+export default async function DocumentsPage(){const u=await getCurrentUser(); if(!u)redirect('/login'); const memberships=await db.membership.findMany({where:{userId:u.id},include:{company:true}}); return <DocumentsClient companies={memberships.map(m=>({id:m.companyId,name:m.company.name,role:m.role}))}/>}

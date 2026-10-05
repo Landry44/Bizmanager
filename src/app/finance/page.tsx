@@ -1,0 +1,2 @@
+import {redirect} from "next/navigation"; import {getCurrentUser,requireMembership} from "@/src/lib/auth"; import FinanceClient from "./FinanceClient";
+export default async function FinancePage(){const user=await getCurrentUser();if(!user)redirect('/login');const memberships=await Promise.all(user.memberships.map(async m=>{await requireMembership(m.companyId);return {id:m.companyId,name:m.company.name,currency:m.company.currency,role:m.role}}));return <FinanceClient user={{firstName:user.firstName,lastName:user.lastName}} memberships={memberships}/>}

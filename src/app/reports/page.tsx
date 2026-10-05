@@ -1,0 +1,2 @@
+import {redirect} from "next/navigation";import {getCurrentUser} from "@/src/lib/auth";import ReportsClient from "./ReportsClient";
+export default async function Reports(){const u=await getCurrentUser();if(!u)redirect("/login");const ms=u.memberships.map(m=>({id:m.company.id,name:m.company.name,currency:m.company.currency,role:m.role}));return <ReportsClient user={{firstName:u.firstName,lastName:u.lastName}} memberships={ms}/>}

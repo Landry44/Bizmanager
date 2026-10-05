@@ -1,0 +1,2 @@
+import {NextResponse} from "next/server";import {db} from "@/src/lib/db";import {requireMembership} from "@/src/lib/auth";
+export async function GET(_:Request,{params}:{params:Promise<{companyId:string}>}){const {companyId}=await params;try{await requireMembership(companyId);return NextResponse.json(await db.stockMovement.findMany({where:{companyId},include:{product:true},orderBy:{createdAt:"desc"},take:200}))}catch{return NextResponse.json({error:"Accès refusé"},{status:403})}}

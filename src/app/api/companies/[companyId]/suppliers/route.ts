@@ -1,0 +1,4 @@
+import { NextResponse } from "next/server"; import { z } from "zod"; import { db } from "@/src/lib/db"; import { requireMembership } from "@/src/lib/auth";
+const schema=z.object({name:z.string().min(2),phone:z.string().optional()});
+export async function GET(_:Request,{params}:{params:Promise<{companyId:string}>}){const {companyId}=await params;try{await requireMembership(companyId);return NextResponse.json(await db.supplier.findMany({where:{companyId},orderBy:{name:"asc"}}))}catch{return NextResponse.json({error:"Accès refusé"},{status:403})}}
+export async function POST(req:Request,{params}:{params:Promise<{companyId:string}>}){const {companyId}=await params;try{await requireMembership(companyId,["OWNER","ADMIN","MANAGER","ACCOUNTANT"]);const d=schema.parse(await req.json());return NextResponse.json(await db.supplier.create({data:{...d,companyId}}),{status:201})}catch(e:any){return NextResponse.json({error:e?.issues||"Erreur"},{status:400})}}
