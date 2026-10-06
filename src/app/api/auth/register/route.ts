@@ -16,10 +16,7 @@ export async function POST(req: Request) {
   try {
     const parsed = schema.safeParse(await req.json());
     if (!parsed.success) {
-      return NextResponse.json(
-        { error: "Données invalides" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Données invalides" }, { status: 400 });
     }
 
     const { companyName, email, password, firstName, lastName } = parsed.data;
@@ -49,9 +46,7 @@ export async function POST(req: Request) {
       });
 
       const company = await tx.company.create({
-        data: {
-          name: companyName,
-        },
+        data: { name: companyName },
       });
 
       await tx.membership.create({
@@ -72,4 +67,4 @@ export async function POST(req: Request) {
     console.error("Erreur inscription:", error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
-} correction de register
+}
