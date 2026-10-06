@@ -55,4 +55,4 @@ export async function POST(
     }
     throw e;
   }
-} correction finale products
+}
