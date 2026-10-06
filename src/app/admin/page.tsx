@@ -11,9 +11,7 @@ export default async function AdminPage() {
   }
 
   const companies = await db.company.findMany({
-    include: {
-      memberships: { include: { user: true } },
-    },
+    include: { memberships: { include: { user: true } } },
     orderBy: { createdAt: "desc" },
   });
 
