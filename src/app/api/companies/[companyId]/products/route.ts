@@ -35,10 +35,12 @@ export async function POST(
     "MANAGER",
     "STOCK_MANAGER",
   ]);
+
   const parsed = productSchema.safeParse(await req.json());
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
+
   try {
     const product = await db.product.create({
       data: { companyId, ...parsed.data },
@@ -53,4 +55,4 @@ export async function POST(
     }
     throw e;
   }
-} correction de productSchema
+} correction syntaxe products
