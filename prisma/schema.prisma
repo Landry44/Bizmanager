@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// --- ENUMS ---
 enum Role {
   OWNER
   ADMIN
@@ -31,39 +30,7 @@ enum AuditAction {
   DELETE
   ROLE_CHANGE
   PASSWORD_CHANGE
-  SUBSCRIPTION_CHANGE
 }
-
-enum SubscriptionPlan {
-  FREE
-  BUSINESS
-  ENTERPRISE
-}
-
-enum SubscriptionStatus {
-  TRIALING
-  ACTIVE
-  PAST_DUE
-  CANCELED
-}
-
-enum DocumentType {
-  QUOTE
-  INVOICE
-  DELIVERY_NOTE
-  RECEIPT
-  CREDIT_NOTE
-}
-
-enum DocumentStatus {
-  DRAFT
-  ISSUED
-  PAID
-  CANCELLED
-  RETURNED
-}
-
-// --- MODELS ---
 
 model User {
   id           String   @id @default(cuid())
@@ -80,48 +47,11 @@ model User {
 }
 
 model Company {
-  id        String   @id @default(cuid())
+  id        String     @id @default(cuid())
   name      String
-  legalName String?
-  phone     String?
-  email     String?
-  address   String?
-  currency  String   @default("XAF")
-  timezone  String   @default("Africa/Libreville")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  memberships         Membership[]
-  auditLogs           AuditLog[]
-  products            Product[]
-  customers           Customer[]
-  suppliers           Supplier[]
-  sales               Sale[]
-  purchases           Purchase[]
-  documents           Document[]
-  returns             Return[]
-  expenses            Expense[]
-  employees           Employee[]
-  payrolls            Payroll[]
-  treasuryTransactions TreasuryTransaction[]
-  stockMovements      StockMovement[]
-  subscription        Subscription?
-}
-
-model Subscription {
-  id               String             @id @default(cuid())
-  companyId        String             @unique
-  plan             SubscriptionPlan   @default(FREE)
-  status           SubscriptionStatus @default(TRIALING)
-  trialEndsAt      DateTime
-  currentPeriodEnd DateTime?
-  maxUsers         Int                @default(2)
-  maxProducts      Int                @default(100)
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  company          Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
-
-  @@index([plan, status])
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  memberships Membership[]
 }
 
 model Membership {
@@ -130,273 +60,33 @@ model Membership {
   companyId String
   role      Role     @default(VIEWER)
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  updatedAt DateTime @updatedAt
 
-  @@unique([userId, companyId])
-  @@index([companyId])
+  user      User     @relation(fields: [userId], references: [id])
+  company   Company  @relation(fields: [companyId], references: [id])
 }
 
 model Session {
-  id         String        @id @default(cuid())
-  tokenHash  String        @unique
-  userId     String
-  status     SessionStatus @default(ACTIVE)
-  expiresAt  DateTime
-  createdAt  DateTime      @default(now())
-  lastSeenAt DateTime      @default(now())
-  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String        @id @default(cuid())
+  userId       String
+  tokenHash    String        @unique
+  status       SessionStatus @default(ACTIVE)
+  expiresAt    DateTime
+  lastSeenAt   DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 
-  @@index([userId, status])
+  user         User          @relation(fields: [userId], references: [id])
 }
 
 model AuditLog {
-  id        String       @id @default(cuid())
-  action    AuditAction
-  entity    String?
-  entityId  String?
-  metadata  Json?
-  ip        String?
-  userAgent String?
-  createdAt DateTime     @default(now())
-  actorId   String?
-  companyId String?
-  actor     User?        @relation("ActorAudit", fields: [actorId], references: [id], onDelete: SetNull)
-  company   Company?     @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  id           String      @id @default(cuid())
+  actorId      String
+  action       AuditAction
+  entity       String
+  entityId     String
+  details      String?
+  createdAt    DateTime    @default(now())
 
-  @@index([companyId, createdAt])
-}
-
-model Product {
-  id            String   @id @default(cuid())
-  companyId     String
-  sku           String
-  name          String
-  purchasePrice Int      @default(0)
-  salePrice     Int      @default(0)
-  stock         Int      @default(0)
-  minStock      Int      @default(0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  company       Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-
-  saleItems      SaleItem[]
-  purchaseItems  PurchaseItem[]
-  stockMovements StockMovement[]
-  documentItems  DocumentItem[]
-
-  @@unique([companyId, sku])
-}
-
-model Customer {
-  id        String   @id @default(cuid())
-  companyId String
-  name      String
-  phone     String?
-  balance   Int      @default(0)
-  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-
-  sales     Sale[]
-  documents Document[]
-  returns   Return[]
-}
-
-model Supplier {
-  id        String   @id @default(cuid())
-  companyId String
-  name      String
-  phone     String?
-  balance   Int      @default(0)
-  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-
-  purchases Purchase[]
-}
-
-model Sale {
-  id         String   @id @default(cuid())
-  companyId  String
-  total      Int
-  payment    String
-  createdAt  DateTime @default(now())
-  customerId String?
-  company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
-
-  items     SaleItem[]
-  documents Document[]
-  returns   Return[]
-
-  @@index([companyId, createdAt])
-}
-
-model SaleItem {
-  id        String  @id @default(cuid())
-  saleId    String
-  productId String
-  quantity  Int
-  unitPrice Int
-  total     Int
-  sale      Sale    @relation(fields: [saleId], references: [id], onDelete: Cascade)
-  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
-
-  @@index([saleId])
-}
-
-model Purchase {
-  id         String    @id @default(cuid())
-  companyId  String
-  supplierId String?
-  total      Int
-  payment    String
-  createdAt  DateTime  @default(now())
-  company    Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  supplier   Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
-
-  items PurchaseItem[]
-
-  @@index([companyId, createdAt])
-}
-
-model PurchaseItem {
-  id         String   @id @default(cuid())
-  purchaseId String
-  productId  String
-  quantity   Int
-  unitPrice  Int
-  total      Int
-  purchase   Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
-  product    Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
-
-  @@index([purchaseId])
-}
-
-model StockMovement {
-  id        String   @id @default(cuid())
-  companyId String
-  productId String
-  type      String
-  quantity  Int
-  note      String?
-  createdAt DateTime @default(now())
-  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@index([companyId, createdAt])
-}
-
-model Expense {
-  id        String   @id @default(cuid())
-  companyId String
-  label     String
-  amount    Int
-  createdAt DateTime @default(now())
-  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-}
-
-model Employee {
-  id        String   @id @default(cuid())
-  companyId String
-  firstName String
-  lastName  String
-  phone     String?
-  position  String?
-  salary    Int      @default(0)
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-
-  payrolls Payroll[]
-
-  @@index([companyId])
-}
-
-model Payroll {
-  id         String    @id @default(cuid())
-  companyId  String
-  employeeId String
-  period     String
-  gross      Int
-  deductions Int       @default(0)
-  bonus      Int       @default(0)
-  net        Int
-  status     String    @default("UNPAID")
-  paidAt     DateTime?
-  createdAt  DateTime  @default(now())
-  company    Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  employee   Employee  @relation(fields: [employeeId], references: [id], onDelete: Restrict)
-
-  @@index([companyId, period])
-}
-
-model TreasuryTransaction {
-  id        String   @id @default(cuid())
-  companyId String
-  type      String
-  account   String
-  amount    Int
-  label     String
-  reference String?
-  createdAt DateTime @default(now())
-  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-
-  @@index([companyId, createdAt])
-}
-
-model Document {
-  id         String         @id @default(cuid())
-  companyId  String
-  number     String
-  type       DocumentType
-  status     DocumentStatus @default(DRAFT)
-  customerId String?
-  saleId     String?
-  subtotal   Int            @default(0)
-  discount   Int            @default(0)
-  tax        Int            @default(0)
-  total      Int            @default(0)
-  paid       Int            @default(0)
-  notes      String?
-  issuedAt   DateTime?
-  dueAt      DateTime?
-  createdAt  DateTime       @default(now())
-  updatedAt  DateTime       @updatedAt
-
-  company  Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  customer Customer?      @relation(fields: [customerId], references: [id], onDelete: SetNull)
-  sale     Sale?          @relation(fields: [saleId], references: [id], onDelete: SetNull)
-  items    DocumentItem[]
-
-  @@unique([companyId, number])
-  @@index([companyId, type, createdAt])
-}
-
-model DocumentItem {
-  id          String   @id @default(cuid())
-  documentId  String
-  productId   String?
-  description String
-  quantity    Int      @default(1)
-  unitPrice   Int      @default(0)
-  total       Int      @default(0)
-  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
-
-  @@index([documentId])
-}
-
-model Return {
-  id           String    @id @default(cuid())
-  companyId    String
-  saleId       String?
-  customerId   String?
-  amount       Int       @default(0)
-  reason       String
-  refundMethod String?
-  status       String    @default("PENDING")
-  createdAt    DateTime  @default(now())
-  company      Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  sale         Sale?     @relation(fields: [saleId], references: [id], onDelete: SetNull)
-  customer     Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
-
-  @@index([companyId, createdAt])
+  actor        User        @relation("ActorAudit", fields: [actorId], references: [id])
 }

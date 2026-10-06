@@ -1,6 +1,6 @@
 {
   "name": "bizmanager-v5",
-  "version": "5.2.0",
+  "version": "5.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -8,16 +8,12 @@
     "start": "next start",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:seed": "tsx prisma/seed.ts",
-    "db:deploy": "prisma migrate deploy",
-    "db:status": "prisma migrate status",
-    "health": "node -e \"fetch((process.env.APP_URL||\"http://localhost:3000\")+\"/api/health\").then(async r=>{console.log(await r.text());process.exit(r.ok?0:1)}).catch(e=>{console.error(e);process.exit(1)})\""
+    "db:seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.3",
+    "@prisma/client": "^6.0.0",
     "bcryptjs": "^3.0.2",
     "next": "^15.0.0",
-    "prisma": "^6.19.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "zod": "^3.24.0"
@@ -26,7 +22,7 @@
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "prisma": "^6.19.0",
+    "prisma": "^6.0.0",
     "tsx": "^4.19.0",
     "typescript": "^5.7.0"
   }

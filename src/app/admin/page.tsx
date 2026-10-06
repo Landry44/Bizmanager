@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/src/lib/auth";
 import { db } from "@/src/lib/db";
+import AdminActions from "./AdminActions";
 
 export default async function AdminPage() {
   const user = await getCurrentUser();
 
-  // Vérification : seul votre email peut accéder à cette page
   if (!user || user.email !== "eyenelandry44@gmail.com") {
     redirect("/dashboard");
   }
@@ -32,6 +32,7 @@ export default async function AdminPage() {
             <th style={{ padding: 12, borderBottom: "1px solid #ddd" }}>Plan</th>
             <th style={{ padding: 12, borderBottom: "1px solid #ddd" }}>Statut</th>
             <th style={{ padding: 12, borderBottom: "1px solid #ddd" }}>Fin d'essai</th>
+            <th style={{ padding: 12, borderBottom: "1px solid #ddd" }}>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -71,6 +72,12 @@ export default async function AdminPage() {
                 {company.subscription?.trialEndsAt 
                   ? new Date(company.subscription.trialEndsAt).toLocaleDateString("fr-FR")
                   : "-"}
+              </td>
+              <td style={{ padding: 12 }}>
+                <AdminActions 
+                  companyId={company.id} 
+                  currentPlan={company.subscription?.plan || "FREE"} 
+                />
               </td>
             </tr>
           ))}

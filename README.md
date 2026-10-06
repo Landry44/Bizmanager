@@ -1,4 +1,4 @@
-# BizManager V5.1
+# BizManager V4.8
 
 Version de stabilisation de BizManager : Next.js + Prisma + PostgreSQL + sessions HTTP-only + multi-entreprises.
 
@@ -32,15 +32,3 @@ Changez immédiatement ce mot de passe en environnement réel.
 - seed réparateur : le compte admin existant est remis en OWNER et son mot de passe est synchronisé
 - caisse multi-produits avec recherche produit et ajustement des quantités dans le panier
 - conservation de l'isolation multi-entreprises et des permissions serveur
-
-
-## V5.1 — déploiement Cloud
-- configuration de production PostgreSQL/SSL
-- Dockerfile de production Next.js standalone
-- configuration Vercel
-- commande `npm run db:deploy` pour les migrations production
-- commande `npm run db:status` pour vérifier les migrations
-- endpoint `/api/health` enrichi (version, environnement, latence)
-- guide `V5_1_DEPLOYMENT.md`
-
-Voir `V5_1_DEPLOYMENT.md` pour la mise en ligne.

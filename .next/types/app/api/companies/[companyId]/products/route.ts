@@ -1,4 +1,4 @@
-// File: C:\Users\DELL\Downloads\BizManager_V5_2_PostgreSQL_Cloud\BizManager_V5_0_PostgreSQL_Cloud\src\app\api\companies\[companyId]\products\route.ts
+// File: C:\Users\DELL\Downloads\BizManager_V5_0_PostgreSQL_Cloud\BizManager_V5_0_PostgreSQL_Cloud\src\app\api\companies\[companyId]\products\route.ts
 import * as entry from '../../../../../../../src/app/api/companies/[companyId]/products/route.js'
 import type { NextRequest } from 'next/server.js'
 

@@ -24,7 +24,6 @@ export async function POST(request:Request){
       const user=await tx.user.create({data:{email:email.toLowerCase(),firstName,lastName,passwordHash,isActive:true}});
       const company=await tx.company.create({data:{name:companyName,currency:"XAF",timezone:"Africa/Libreville"}});
       await tx.membership.create({data:{userId:user.id,companyId:company.id,role:"OWNER"}});
-      await tx.subscription.create({data:{companyId:company.id,trialEndsAt:new Date(Date.now()+14*86400000),maxUsers:2,maxProducts:100}});
       return {user,company};
     });
     await createSession(result.user.id);

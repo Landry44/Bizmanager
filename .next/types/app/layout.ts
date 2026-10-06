@@ -1,4 +1,4 @@
-// File: C:\Users\DELL\Downloads\BizManager_V5_2_PostgreSQL_Cloud\BizManager_V5_0_PostgreSQL_Cloud\src\app\layout.tsx
+// File: C:\Users\DELL\Downloads\BizManager_V5_0_PostgreSQL_Cloud\BizManager_V5_0_PostgreSQL_Cloud\src\app\layout.tsx
 import * as entry from '../../../src/app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
