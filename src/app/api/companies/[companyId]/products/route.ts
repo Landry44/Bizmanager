@@ -3,14 +3,6 @@ import {z} from "zod";
 import {db} from "@/src/lib/db";
 import {requireMembership} from "@/src/lib/auth";
 
-const productSchema=z.object({
-  sku:z.string().trim().min(1).max(80),
-  name:z.string().trim().min(1).max(160),
-  purchasePrice:z.coerce.number().int().min(0),
-  salePrice:z.coerce.number().int().min(0),
-  stock:z.coerce.number().int().min(0),
-  minStock:z.coerce.number().int().min(0),
-});
 
 export async function GET(_:NextRequest,{params}:{params:Promise<{companyId:string}>}){
   const {companyId}=await params;
