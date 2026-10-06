@@ -11,7 +11,9 @@ export default async function AdminPage() {
   }
 
   const companies = await db.company.findMany({
-    include: { subscription: true, memberships: { include: { user: true } } },
+    include: {
+      memberships: { include: { user: true } },
+    },
     orderBy: { createdAt: "desc" },
   });
 
@@ -48,10 +50,10 @@ export default async function AdminPage() {
                   borderRadius: 4,
                   fontSize: 12,
                   fontWeight: "bold",
-                  backgroundColor: company.subscription?.plan === "FREE" ? "#e5e7eb" : "#dbeafe",
-                  color: company.subscription?.plan === "FREE" ? "#374151" : "#1e40af"
+                  backgroundColor: "#e5e7eb",
+                  color: "#374151"
                 }}>
-                  {company.subscription?.plan || "Aucun"}
+                  FREE
                 </span>
               </td>
               <td style={{ padding: 12 }}>
@@ -60,24 +62,15 @@ export default async function AdminPage() {
                   borderRadius: 4,
                   fontSize: 12,
                   fontWeight: "bold",
-                  backgroundColor: company.subscription?.status === "ACTIVE" ? "#dcfce7" : 
-                                   company.subscription?.status === "TRIALING" ? "#fef9c3" : "#fee2e2",
-                  color: company.subscription?.status === "ACTIVE" ? "#166534" : 
-                         company.subscription?.status === "TRIALING" ? "#854d0e" : "#991b1b"
+                  backgroundColor: "#fef9c3",
+                  color: "#854d0e"
                 }}>
-                  {company.subscription?.status || "Inconnu"}
+                  TRIALING
                 </span>
               </td>
+              <td style={{ padding: 12 }}>-</td>
               <td style={{ padding: 12 }}>
-                {company.subscription?.trialEndsAt 
-                  ? new Date(company.subscription.trialEndsAt).toLocaleDateString("fr-FR")
-                  : "-"}
-              </td>
-              <td style={{ padding: 12 }}>
-                <AdminActions 
-                  companyId={company.id} 
-                  currentPlan={company.subscription?.plan || "FREE"} 
-                />
+                <AdminActions companyId={company.id} currentPlan="FREE" />
               </td>
             </tr>
           ))}
@@ -85,7 +78,9 @@ export default async function AdminPage() {
       </table>
 
       {companies.length === 0 && (
-        <p style={{ marginTop: 24, color: "#999" }}>Aucune entreprise inscrite pour le moment.</p>
+        <p style={{ marginTop: 24, color: "#999" }}>
+          Aucune entreprise inscrite pour le moment.
+        </p>
       )}
     </main>
   );
