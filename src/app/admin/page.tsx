@@ -44,27 +44,15 @@ export default async function AdminPage() {
               </td>
               <td style={{ padding: 12 }}>
                 <span style={{
-                  padding: "4px 8px",
-                  borderRadius: 4,
-                  fontSize: 12,
-                  fontWeight: "bold",
-                  backgroundColor: "#e5e7eb",
-                  color: "#374151"
-                }}>
-                  FREE
-                </span>
+                  padding: "4px 8px", borderRadius: 4, fontSize: 12,
+                  fontWeight: "bold", backgroundColor: "#e5e7eb", color: "#374151"
+                }}>FREE</span>
               </td>
               <td style={{ padding: 12 }}>
                 <span style={{
-                  padding: "4px 8px",
-                  borderRadius: 4,
-                  fontSize: 12,
-                  fontWeight: "bold",
-                  backgroundColor: "#fef9c3",
-                  color: "#854d0e"
-                }}>
-                  TRIALING
-                </span>
+                  padding: "4px 8px", borderRadius: 4, fontSize: 12,
+                  fontWeight: "bold", backgroundColor: "#fef9c3", color: "#854d0e"
+                }}>TRIALING</span>
               </td>
               <td style={{ padding: 12 }}>-</td>
               <td style={{ padding: 12 }}>
